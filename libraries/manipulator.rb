@@ -152,8 +152,11 @@ class Manipulator
 
     # Only write out the file if the contents have changed...
     if contents_sha != current_sha
-      ::File.open(hostsfile_path, 'w') do |f|
+      ::Tempfile.open('hostsfile') do |f|
         f.write(contents)
+        f.flush
+        FileUtils.chmod(0644, f.path)
+        FileUtils.mv(f.path, hostsfile_path)
       end
     end
   end
